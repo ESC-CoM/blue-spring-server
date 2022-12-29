@@ -17,7 +17,7 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
-
+yarn.lock
 prisma/user
 # IDEs and editors
 /.idea
