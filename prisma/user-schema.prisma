@@ -1,0 +1,181 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./user"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("USER_DATABASE_URL")
+}
+model User {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email      String   @db.VarChar(20) @unique
+  userInfoId String   @db.Uuid @unique
+  userInfo   UserInfo @relation(fields: [userInfoId], references: [id])
+  password   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+
+  @@index([email, password])
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+
+model OAuth {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email            String        @db.VarChar(20) @unique
+  externalIdentity String        @unique
+  providerId       String        @db.Uuid
+  provider         OAuthProvider @relation(fields: [providerId], references: [id])
+  userInfoId       String        @db.Uuid @unique
+  userInfo         UserInfo      @relation(fields: [userInfoId], references: [id])
+  createdAt        DateTime      @default(now())
+
+  @@index([userInfoId, providerId])
+  @@index([createdAt])
+}
+
+model OwnRefreshToken {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userInfoId   String   @db.Uuid @unique
+  userInfo     UserInfo @relation(references: [id], fields: [userInfoId])
+  refreshToken String   @db.VarChar(500)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  @@index([userInfoId, refreshToken])
+}
+
+model OAuthProvider {
+  id     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name   String  @db.VarChar(10)
+  oAuths OAuth[]
+  @@index([name])
+}
+
+model UserInfo {
+  id              String           @id @default(uuid())
+  email           String           @db.VarChar(40) @unique
+  phone           String           @unique @db.Char(11)
+  nickname        String           @db.VarChar(12)
+  gender          Gender
+  birthYear       Int
+  profileImageUrl String
+  role            Role
+  createdAt       DateTime         @default(now())
+  deleted         Boolean
+  user            User?
+  oAuth           OAuth?
+  registerType    RegisterType
+  introduce       UserIntroduce?
+  collegeInfo     UserCollegeInfo?
+  refreshToken    OwnRefreshToken?
+  @@index([gender])
+  @@index([nickname])
+  @@index([birthYear])
+}
+enum RegisterType {
+  OAUTH
+  EMAIL
+}
+
+enum Role {
+  USER
+  ADMIN
+  GUEST
+}
+
+enum Gender {
+  M
+  F
+}
+
+model UserIntroduce {
+  id                 String                    @id @default(uuid())
+  userInfoId         String                    @db.Uuid @unique
+  userInfo           UserInfo                  @relation(fields: [userInfoId], references: [id])
+  MBTI               MBTI
+  drinkCapacity      Decimal
+  height             Decimal
+  weight             Decimal
+  columnVisibilities UserIntroduceVisibility[]
+  @@index([height,weight, drinkCapacity])
+  @@index([MBTI])
+}
+
+model UserCollegeInfo {
+  id         String   @id @default(uuid())
+  userInfoId String   @db.Uuid @unique
+  userInfo   UserInfo @relation(fields: [userInfoId], references: [id])
+  majorId    String   @db.Uuid
+  major      Major    @relation(fields: [majorId], references: [id])
+  studentId  String   @db.VarChar(10)
+  @@index([majorId])
+  @@index([studentId])
+}
+
+model UserIntroduceVisibility {
+  id                    String              @id @default(uuid())
+  userIntroduceId       String              @db.Uuid
+  userIntroduce         UserIntroduce       @relation(fields: [userIntroduceId], references: [id])
+  userIntroduceColumnId String              @db.Uuid
+  userIntroduceColumn   UserIntroduceColumn @relation(fields: [userIntroduceColumnId], references: [id])
+  public                Boolean
+  @@index([userIntroduceId, userIntroduceColumnId])
+}
+
+model UserIntroduceColumn {
+  id         String                    @id @default(uuid())
+  name       String                    @db.VarChar(20)
+  visibility UserIntroduceVisibility[]
+  @@index([name])
+}
+
+model University {
+  id       String    @id @default(uuid())
+  name     String    @db.VarChar(20)
+  colleges College[]
+  @@index([name])
+}
+
+model College {
+  id           String     @id @default(uuid())
+  universityId String     @db.Uuid
+  university   University @relation(fields: [universityId], references: [id])
+  name         String     @db.VarChar(20)
+  majors       Major[]
+  @@index([universityId])
+  @@index([name])
+}
+
+model Major {
+  id               String            @id @default(uuid())
+  collegeId        String            @db.Uuid
+  college          College           @relation(fields: [collegeId], references: [id])
+  name             String            @db.VarChar(20)
+  userCollegeInfos UserCollegeInfo[]
+  @@index([collegeId])
+  @@index([name])
+}
+
+enum MBTI {
+  INFP
+  INFJ
+  INTP
+  INTJ
+  ISFP
+  ISFJ
+  ISTP
+  ISTJ
+  ENFP
+  ENFJ
+  ENTP
+  ENTJ
+  ESFP
+  ESFJ
+  ESTP
+  ESTJ
+}
