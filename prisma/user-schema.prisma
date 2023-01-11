@@ -11,7 +11,7 @@ datasource db {
   url      = env("USER_DATABASE_URL")
 }
 model User {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         String   @id @db.Uuid
   email      String   @db.VarChar(20) @unique
   userInfoId String   @db.Uuid @unique
   userInfo   UserInfo @relation(fields: [userInfoId], references: [id])
@@ -25,7 +25,7 @@ model User {
 }
 
 model OAuth {
-  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               String        @id @db.Uuid
   email            String        @db.VarChar(20) @unique
   externalIdentity String        @unique
   providerId       String        @db.Uuid
@@ -39,7 +39,7 @@ model OAuth {
 }
 
 model OwnRefreshToken {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           String   @id @db.Uuid
   userInfoId   String   @db.Uuid @unique
   userInfo     UserInfo @relation(references: [id], fields: [userInfoId])
   refreshToken String   @db.VarChar(500)
@@ -50,7 +50,7 @@ model OwnRefreshToken {
 }
 
 model OAuthProvider {
-  id     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id     String  @id @db.Uuid
   name   String  @db.VarChar(10)
   oAuths OAuth[]
 
@@ -58,7 +58,7 @@ model OAuthProvider {
 }
 
 model UserInfo {
-  id              String           @id @default(uuid())
+  id              String           @id @db.Uuid
   email           String           @db.VarChar(40) @unique
   phone           String           @unique @db.Char(11)
   nickname        String           @db.VarChar(12)
@@ -96,7 +96,7 @@ enum Gender {
 }
 
 model UserIntroduce {
-  id                 String                    @id @default(uuid())
+  id                 String                    @id @db.Uuid
   userInfoId         String                    @db.Uuid @unique
   userInfo           UserInfo                  @relation(fields: [userInfoId], references: [id])
   MBTI               MBTI
@@ -110,7 +110,7 @@ model UserIntroduce {
 }
 
 model UserMajorInfo {
-  id         String   @id @default(uuid())
+  id         String   @id @db.Uuid
   userInfoId String   @db.Uuid @unique
   userInfo   UserInfo @relation(fields: [userInfoId], references: [id])
   majorId    String   @db.Uuid
@@ -121,7 +121,7 @@ model UserMajorInfo {
 }
 
 model UserIntroduceVisibility {
-  id                    String              @id @default(uuid())
+  id                    String              @id @db.Uuid
   userIntroduceId       String              @db.Uuid
   userIntroduce         UserIntroduce       @relation(fields: [userIntroduceId], references: [id])
   userIntroduceColumnId String              @db.Uuid
@@ -132,7 +132,7 @@ model UserIntroduceVisibility {
 }
 
 model UserIntroduceColumn {
-  id         String                    @id @default(uuid())
+  id         String                    @id  @db.Uuid
   name       String                    @db.VarChar(20)
   visibility UserIntroduceVisibility[]
 
