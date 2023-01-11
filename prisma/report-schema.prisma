@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./report"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("REPORT_DATABASE_URL")
+}
+
+model UserReport {
+  id           String      @id @db.Uuid
+  reporterId   String      @db.Uuid
+  targetUserId String      @db.Uuid
+  content      String      @db.Text
+  createdAt    DateTime    @default(now())
+  state        ReportState
+}
+
+enum ReportState {
+  PENDING
+  PROCESSING
+  RESOLVED
+}
+
+model MeetingReport {
+  id              String      @id @db.Uuid
+  reporterId      String      @db.Uuid
+  targetMeetingId String      @db.Uuid
+  content         String      @db.Text
+  createdAt       DateTime    @default(now())
+  state           ReportState
+}
