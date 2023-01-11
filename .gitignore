@@ -10,14 +10,15 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-
+.env
 # OS
 .DS_Store
 
 # Tests
 /coverage
 /.nyc_output
-
+yarn.lock
+prisma/user
 # IDEs and editors
 /.idea
 .project
