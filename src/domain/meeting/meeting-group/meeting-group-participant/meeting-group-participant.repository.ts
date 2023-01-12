@@ -11,4 +11,15 @@ export class MeetingGroupParticipantRepository extends MeetingPrisma {
       })),
     });
   }
+
+  public async removeParticipants(meetingGroupId: string, userIds: string[]) {
+    this.meetingGroupParticipant.deleteMany({
+      where: {
+        meetingGroupId,
+        participantId: {
+          in: userIds,
+        },
+      },
+    });
+  }
 }
