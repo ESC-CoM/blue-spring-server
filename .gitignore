@@ -12,13 +12,14 @@ yarn-error.log*
 lerna-debug.log*
 /prisma/**
 !/prisma/*.prisma
+.env
 # OS
 .DS_Store
-.env
+
 # Tests
 /coverage
 /.nyc_output
-
+yarn.lock
 # IDEs and editors
 /.idea
 .project
