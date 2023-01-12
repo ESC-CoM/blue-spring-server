@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./university"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("UNIVERSITY_DATABASE_URL")
+}
+
+model University {
+  id      String    @db.Uuid @id
+  name    String    @db.VarChar(30)
+  college College[]
+}
+
+model College {
+  id           String     @db.Uuid @id
+  universityId String     @db.Uuid
+  university   University @relation(references: [id], fields: [universityId])
+  name         String     @db.VarChar(20)
+  majors       Major[]
+}
+
+model Major {
+  id        String  @db.Uuid @id
+  collegeId String  @db.Uuid
+  college   College @relation(references: [id], fields: [collegeId])
+  name      String  @db.VarChar(30)
+}

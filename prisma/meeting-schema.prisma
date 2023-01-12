@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./meeting"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("MEETING_DATABASE_URL")
+}
+
+model Meeting {
+  id                 String           @db.Uuid @id
+  ownerGroupId       String           @db.Uuid
+  ownerGroup         MeetingGroup     @relation("owner", references: [id], fields: [ownerGroupId])
+  participantGroupId String           @db.Uuid
+  participantGroup   MeetingGroup     @relation("participant", references: [id], fields: [participantGroupId])
+  timeVoteId         String           @db.Uuid
+  mapVoteId          String           @db.Uuid
+  requests           MeetingRequest[]
+}
+
+model MeetingRequest {
+  id               String              @db.Uuid @id
+  meetingId        String              @db.Uuid
+  meeting          Meeting             @relation(references: [id], fields: [meetingId])
+  requesterGroupId String              @db.Uuid
+  requesterGroup   MeetingGroup        @relation(references: [id], fields: [requesterGroupId])
+  state            MeetingRequestState
+}
+
+model MeetingGroup {
+  id            String                    @db.Uuid @id
+  ownerId       String                    @db.Uuid
+  title         String                    @db.VarChar(20)
+  content       String                    @db.Text
+  joinedMeeting Meeting[]                 @relation("participant")
+  ownMeeting    Meeting[]                 @relation("owner")
+  sentRequests  MeetingRequest[]
+  participants  MeetingGroupParticipant[]
+}
+
+model MeetingGroupParticipant {
+  id             String       @db.Uuid @id
+  meetingGroupId String       @db.Uuid
+  meetingGroup   MeetingGroup @relation(references: [id], fields: [meetingGroupId])
+  participantId  String       @db.Uuid
+}
+
+enum MeetingRequestState {
+  PENDING
+  REJECT
+  REPENDING
+  BANNED
+}

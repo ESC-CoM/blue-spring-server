@@ -10,6 +10,8 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+/prisma/**
+!/prisma/*.prisma
 .env
 # OS
 .DS_Store
@@ -18,7 +20,6 @@ lerna-debug.log*
 /coverage
 /.nyc_output
 yarn.lock
-prisma/user
 # IDEs and editors
 /.idea
 .project
