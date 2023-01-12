@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./authentication"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("AUTHENTICATION_DATABASE_URL")
+}
+
+model StudentCertification {
+  id                      String                     @db.Uuid @id
+  userInfoId              String                     @db.Uuid
+  universityName          String                     @db.VarChar(20)
+  collegeName             String                     @db.VarChar(20)
+  majorName               String                     @db.VarChar(20)
+  studentId               String                     @db.VarChar(20)
+  name                    String                     @db.VarChar(20)
+  others                  String                     @db.Text
+  status                  StudentCertificationStatus
+  certificationPictureUrl String                     @db.VarChar(300)
+  createdAt               DateTime
+  updatedAt               DateTime
+}
+
+enum StudentCertificationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}

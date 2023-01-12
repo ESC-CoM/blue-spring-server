@@ -10,10 +10,11 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-
+/prisma/**
+!/prisma/*.prisma
 # OS
 .DS_Store
-
+.env
 # Tests
 /coverage
 /.nyc_output
