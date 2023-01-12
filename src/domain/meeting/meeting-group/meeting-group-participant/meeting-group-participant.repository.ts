@@ -1,5 +1,5 @@
 import { MeetingPrisma } from '../../meeting.prisma';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 } from 'uuid';
 import { Prisma, PrismaPromise } from '../../../../../prisma/meeting';
 
 export class MeetingGroupParticipantRepository extends MeetingPrisma {
@@ -9,7 +9,7 @@ export class MeetingGroupParticipantRepository extends MeetingPrisma {
   ): PrismaPromise<Prisma.BatchPayload> {
     return this.meetingGroupParticipant.createMany({
       data: participantIds.map((participantId) => ({
-        id: uuidv4(),
+        id: v4(),
         meetingGroupId,
         participantId,
       })),
@@ -30,19 +30,19 @@ export class MeetingGroupParticipantRepository extends MeetingPrisma {
     });
   }
 
-  public async modifyParticipantListWithCompare(
+  public getParticipantInGroup(meetingGroupId: string) {
+    return this.meetingGroupParticipant.findMany({
+      where: {
+        meetingGroupId,
+      },
+    });
+  }
+
+  public async modifyParticipantList(
     meetingGroupId: string,
-    beforeParticipantIds: string[],
-    afterParticipantIds: string[],
+    deleteTargets: string[],
+    insertTargets: string[],
   ) {
-    const deleteTargets = beforeParticipantIds.filter(
-      (beforeParticipantId) =>
-        !afterParticipantIds.includes(beforeParticipantId),
-    );
-    const insertTargets = afterParticipantIds.filter(
-      (afterParticipantId) =>
-        !beforeParticipantIds.includes(afterParticipantId),
-    );
     await this.$transaction([
       this.removeParticipants(meetingGroupId, deleteTargets),
       this.participateGroup(meetingGroupId, insertTargets),
