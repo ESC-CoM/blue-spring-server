@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { MeetingGroupModule } from './meeting-group/meeting-group.module';
 
-@Module({})
+@Module({
+  imports: [MeetingGroupModule],
+})
 export class MeetingModule {}
