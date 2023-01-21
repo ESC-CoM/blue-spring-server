@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { MeetingGroupModule } from './meeting-group/meeting-group.module';
+import { MeetingService } from './meeting.service';
 
 @Module({
-  imports: [MeetingGroupModule],
+  imports: [],
+  providers: [MeetingService],
 })
 export class MeetingModule {}
