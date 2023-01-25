@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./chatting"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CHATTING_DATABASE_URL")
+}
+
+model ChatRoom {
+  id              String           @db.Uuid @id
+  createdAt       DateTime
+  meetingChatRoom MeetingChatRoom?
+  chats           Chat[]
+}
+
+model MeetingChatRoom {
+  id         String   @db.Uuid @id
+  meetingId  String   @db.Uuid
+  chatRoomId String   @db.Uuid @unique
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+}
+
+model Chat {
+  id         String   @db.Uuid @id
+  senderId   String   @db.Uuid
+  chatRoomId String   @db.Uuid
+  chatRoom   ChatRoom @relation(references: [id], fields: [chatRoomId])
+  contentId  String   @db.Uuid @unique
+  content    Content  @relation(references: [id], fields: [contentId])
+  message    String   @db.Text
+  createdAt  DateTime
+  deleted    Boolean
+}
+
+model Content {
+  id             String                     @db.Uuid @id
+  type           ContentType
+  multipleImages ChatContentMultipleImage[]
+  file           ChatContentFile?
+  chat           Chat?
+}
+
+model ChatContentMultipleImage {
+  id        String  @db.Uuid @id
+  fileId    String  @db.Uuid
+  contentId String  @db.Uuid
+  content   Content @relation(fields: [contentId], references: [id])
+}
+
+enum ContentType {
+  VIDEO
+  IMAGE
+  MULTIPLE_IMAGE
+  PLACE
+  VOTE
+}
+
+model ChatContentFile {
+  id        String   @db.Uuid @id
+  contentId String   @db.Uuid @unique
+  content   Content  @relation(fields: [contentId], references: [id])
+  fileUrl   String   @db.VarChar(300)
+  createdAt DateTime
+}
+
+//2 4

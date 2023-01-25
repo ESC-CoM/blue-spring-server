@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./vote"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("VOTE_DATABASE_URL")
+}
+
+model Vote {
+  id              String          @db.Uuid @id
+  title           String          @db.VarChar(50)
+  type            VoteType
+  resultContentId String          @db.Uuid @unique
+  resultContent   VoteContent     @relation("result", references: [id], fields: [resultContentId])
+  contentType     VoteContentType
+  createdAt       DateTime
+  contents        VoteContent[]   @relation("contents")
+}
+
+enum VoteType {
+  RADIO
+  CHECKBOX
+}
+
+model VoteContent {
+  id           String          @db.Uuid @id
+  time         DateTime        @db.Time()
+  placeId      String          @db.Uuid @unique
+  place        Place           @relation(references: [id], fields: [placeId])
+  type         VoteContentType
+  voteId       String          @db.Uuid
+  vote         Vote            @relation("contents", references: [id], fields: [voteId])
+  selectedVote Vote?           @relation("result")
+}
+
+enum VoteContentType {
+  PLACE
+  TIME
+}
+
+model UserVotedContent {
+  id            String @db.Uuid @id
+  userId        String @db.Uuid //[ref: > user.id]
+  voteContentId String @db.Uuid
+}
+
+model Place {
+  id            String       @db.Uuid @id
+  title         String       @db.VarChar(20)
+  address       String       @db.VarChar(100)
+  latitude      Decimal
+  longitude     Decimal
+  linkedContent VoteContent?
+}

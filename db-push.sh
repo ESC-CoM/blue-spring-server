@@ -1,0 +1,9 @@
+npx prisma db push --schema=./prisma/user-schema.prisma
+npx prisma db push --schema=./prisma/authentication-schema.prisma
+npx prisma db push --schema=./prisma/chatting-schema.prisma
+npx prisma db push --schema=./prisma/friend-schema.prisma
+npx prisma db push --schema=./prisma/meeting-schema.prisma
+npx prisma db push --schema=./prisma/notification-schema.prisma
+npx prisma db push --schema=./prisma/report-schema.prisma
+npx prisma db push --schema=./prisma/university-schema.prisma
+npx prisma db push --schema=./prisma/vote-schema.prisma

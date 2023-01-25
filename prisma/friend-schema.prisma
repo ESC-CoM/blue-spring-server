@@ -1,0 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./friend"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("FRIEND_DATABASE_URL")
+}
+
+model Friend {
+  id               String @id @db.Uuid
+  userInfoId       String @db.Uuid
+  friendUserInfoId String @db.Uuid
+}
+
+model FiendRequest {
+  id        String   @id @db.Uuid
+  from      String   @db.Uuid
+  to        String   @db.Uuid
+  createdAt DateTime
+}
