@@ -1,3 +1,3 @@
-import { PrismaClient } from '../../../prisma/meeting';
+import { PrismaClient } from 'prisma/meeting';
 
 export class MeetingPrisma extends PrismaClient {}

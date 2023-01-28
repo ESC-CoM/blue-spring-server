@@ -1,7 +1,7 @@
 import { MeetingPrisma } from './meeting.prisma';
 import { MeetingCreateDto } from './dto/meeting.create.dto';
 import { v4 } from 'uuid';
-import { Prisma } from '../../../prisma/meeting';
+import { Prisma } from 'prisma/meeting';
 import MeetingDelegate = Prisma.MeetingDelegate;
 
 export class MeetingRepository {

@@ -1,4 +1,4 @@
-import { Gender, Role } from '../../../../prisma/user';
+import { Gender, Role } from 'prisma/user';
 
 export interface UserInfoCreateDto {
   phone: string; //         String           @unique @db.Char(11)

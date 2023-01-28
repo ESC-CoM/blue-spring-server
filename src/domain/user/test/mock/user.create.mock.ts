@@ -1,6 +1,6 @@
 import { UserCreateDto } from '../../dto/user.create.dto';
 import { faker } from '@faker-js/faker/locale/de';
-import { Gender } from '../../../../../prisma/user';
+import { Gender } from 'prisma/user';
 
 faker.setLocale('ko');
 const createUsers: (number: number, Gender: Gender) => UserCreateDto[] = (

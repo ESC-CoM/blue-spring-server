@@ -1,9 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  output   = "./chatting"
+  output   = "../node_modules/prisma/chatting"
 }
 
 datasource db {
@@ -12,44 +9,52 @@ datasource db {
 }
 
 model ChatRoom {
-  id              String           @db.Uuid @id
+  id              String           @id @db.Uuid
   createdAt       DateTime
-  meetingChatRoom MeetingChatRoom?
   chats           Chat[]
+  meetingChatRoom MeetingChatRoom?
 }
 
 model MeetingChatRoom {
-  id         String   @db.Uuid @id
+  id         String   @id @db.Uuid
   meetingId  String   @db.Uuid
-  chatRoomId String   @db.Uuid @unique
+  chatRoomId String   @unique @db.Uuid
   chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
 }
 
 model Chat {
-  id         String   @db.Uuid @id
+  id         String   @id @db.Uuid
   senderId   String   @db.Uuid
   chatRoomId String   @db.Uuid
-  chatRoom   ChatRoom @relation(references: [id], fields: [chatRoomId])
-  contentId  String   @db.Uuid @unique
-  content    Content  @relation(references: [id], fields: [contentId])
-  message    String   @db.Text
+  contentId  String   @unique @db.Uuid
+  message    String
   createdAt  DateTime
   deleted    Boolean
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+  content    Content  @relation(fields: [contentId], references: [id])
 }
 
 model Content {
-  id             String                     @db.Uuid @id
+  id             String                     @id @db.Uuid
   type           ContentType
-  multipleImages ChatContentMultipleImage[]
-  file           ChatContentFile?
   chat           Chat?
+  file           ChatContentFile?
+  multipleImages ChatContentMultipleImage[]
 }
 
 model ChatContentMultipleImage {
-  id        String  @db.Uuid @id
+  id        String  @id @db.Uuid
   fileId    String  @db.Uuid
   contentId String  @db.Uuid
   content   Content @relation(fields: [contentId], references: [id])
+}
+
+model ChatContentFile {
+  id        String   @id @db.Uuid
+  contentId String   @unique @db.Uuid
+  fileUrl   String   @db.VarChar(300)
+  createdAt DateTime
+  content   Content  @relation(fields: [contentId], references: [id])
 }
 
 enum ContentType {
@@ -59,13 +64,3 @@ enum ContentType {
   PLACE
   VOTE
 }
-
-model ChatContentFile {
-  id        String   @db.Uuid @id
-  contentId String   @db.Uuid @unique
-  content   Content  @relation(fields: [contentId], references: [id])
-  fileUrl   String   @db.VarChar(300)
-  createdAt DateTime
-}
-
-//2 4

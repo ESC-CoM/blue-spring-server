@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserPrisma } from './user.prisma';
 import { v4 } from 'uuid';
 import { UserCreateDto } from './dto/user.create.dto';
-import { RegisterType } from '../../../prisma/user';
+import { RegisterType } from 'prisma/user';
 
 @Injectable()
 export class UserRepository extends UserPrisma {
