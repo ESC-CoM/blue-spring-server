@@ -2,8 +2,10 @@ import { MeetingPrisma } from './meeting.prisma';
 import { MeetingCreateDto } from './dto/meeting.create.dto';
 import { v4 } from 'uuid';
 import { Prisma } from 'prisma/meeting';
+import { Injectable } from '@nestjs/common';
 import MeetingDelegate = Prisma.MeetingDelegate;
 
+@Injectable()
 export class MeetingRepository {
   private readonly meeting: MeetingDelegate<null>;
 
