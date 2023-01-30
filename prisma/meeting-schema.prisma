@@ -1,9 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  output   = "./meeting"
+  output   = "../node_modules/prisma/meeting"
 }
 
 datasource db {
@@ -12,41 +9,53 @@ datasource db {
 }
 
 model Meeting {
-  id                 String           @db.Uuid @id
+  id                 String           @id @db.Uuid
   ownerGroupId       String           @db.Uuid
-  ownerGroup         MeetingGroup     @relation("owner", references: [id], fields: [ownerGroupId])
-  participantGroupId String           @db.Uuid
-  participantGroup   MeetingGroup     @relation("participant", references: [id], fields: [participantGroupId])
-  timeVoteId         String           @db.Uuid
-  mapVoteId          String           @db.Uuid
+  participantGroupId String?          @db.Uuid
+  ownerGroup         MeetingGroup     @relation("owner", fields: [ownerGroupId], references: [id], onDelete: Cascade)
+  participantGroup   MeetingGroup?    @relation("participant", fields: [participantGroupId], references: [id], onDelete: SetNull)
   requests           MeetingRequest[]
 }
 
+model MeetingVoteResult {
+  id        String   @id @db.Uuid
+  meetingId String   @db.Uuid
+  voteId    String   @db.Uuid
+  type      VoteType
+
+  @@unique([meetingId, type])
+}
+
+enum VoteType {
+  PLACE
+  TIME
+}
+
 model MeetingRequest {
-  id               String              @db.Uuid @id
+  id               String              @id @db.Uuid
   meetingId        String              @db.Uuid
-  meeting          Meeting             @relation(references: [id], fields: [meetingId])
   requesterGroupId String              @db.Uuid
-  requesterGroup   MeetingGroup        @relation(references: [id], fields: [requesterGroupId])
   state            MeetingRequestState
+  meeting          Meeting             @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  requesterGroup   MeetingGroup        @relation(fields: [requesterGroupId], references: [id], onDelete: Cascade)
 }
 
 model MeetingGroup {
-  id            String                    @db.Uuid @id
+  id            String                    @id @db.Uuid
   ownerId       String                    @db.Uuid
   title         String                    @db.VarChar(20)
-  content       String                    @db.Text
-  joinedMeeting Meeting[]                 @relation("participant")
+  content       String
   ownMeeting    Meeting[]                 @relation("owner")
-  sentRequests  MeetingRequest[]
+  joinedMeeting Meeting[]                 @relation("participant")
   participants  MeetingGroupParticipant[]
+  sentRequests  MeetingRequest[]
 }
 
 model MeetingGroupParticipant {
-  id             String       @db.Uuid @id
+  id             String       @id @db.Uuid
   meetingGroupId String       @db.Uuid
-  meetingGroup   MeetingGroup @relation(references: [id], fields: [meetingGroupId])
   participantId  String       @db.Uuid
+  meetingGroup   MeetingGroup @relation(fields: [meetingGroupId], references: [id], onDelete: Cascade)
 }
 
 enum MeetingRequestState {

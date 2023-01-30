@@ -15,7 +15,7 @@ lerna-debug.log*
 .env
 # OS
 .DS_Store
-
+*.lock
 # Tests
 /coverage
 /.nyc_output

@@ -1,9 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  output   = "./vote"
+  output   = "../node_modules/prisma/vote"
 }
 
 datasource db {
@@ -12,14 +9,40 @@ datasource db {
 }
 
 model Vote {
-  id              String          @db.Uuid @id
+  id              String          @id @db.Uuid
   title           String          @db.VarChar(50)
   type            VoteType
-  resultContentId String          @db.Uuid @unique
-  resultContent   VoteContent     @relation("result", references: [id], fields: [resultContentId])
+  resultContentId String          @unique @db.Uuid
   contentType     VoteContentType
   createdAt       DateTime
+  resultContent   VoteContent     @relation("result", fields: [resultContentId], references: [id])
   contents        VoteContent[]   @relation("contents")
+}
+
+model VoteContent {
+  id           String          @id @db.Uuid
+  time         DateTime        @db.Time(6)
+  placeId      String          @unique @db.Uuid
+  type         VoteContentType
+  voteId       String          @db.Uuid
+  selectedVote Vote?           @relation("result")
+  place        Place           @relation(fields: [placeId], references: [id])
+  vote         Vote            @relation("contents", fields: [voteId], references: [id])
+}
+
+model UserVotedContent {
+  id            String @id @db.Uuid
+  userId        String @db.Uuid
+  voteContentId String @db.Uuid
+}
+
+model Place {
+  id            String       @id @db.Uuid
+  title         String       @db.VarChar(20)
+  address       String       @db.VarChar(100)
+  latitude      Decimal
+  longitude     Decimal
+  linkedContent VoteContent?
 }
 
 enum VoteType {
@@ -27,33 +50,7 @@ enum VoteType {
   CHECKBOX
 }
 
-model VoteContent {
-  id           String          @db.Uuid @id
-  time         DateTime        @db.Time()
-  placeId      String          @db.Uuid @unique
-  place        Place           @relation(references: [id], fields: [placeId])
-  type         VoteContentType
-  voteId       String          @db.Uuid
-  vote         Vote            @relation("contents", references: [id], fields: [voteId])
-  selectedVote Vote?           @relation("result")
-}
-
 enum VoteContentType {
   PLACE
   TIME
-}
-
-model UserVotedContent {
-  id            String @db.Uuid @id
-  userId        String @db.Uuid //[ref: > user.id]
-  voteContentId String @db.Uuid
-}
-
-model Place {
-  id            String       @db.Uuid @id
-  title         String       @db.VarChar(20)
-  address       String       @db.VarChar(100)
-  latitude      Decimal
-  longitude     Decimal
-  linkedContent VoteContent?
 }

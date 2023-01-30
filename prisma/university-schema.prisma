@@ -1,9 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  output   = "./university"
+  output   = "../node_modules/prisma/university"
 }
 
 datasource db {
@@ -12,22 +9,22 @@ datasource db {
 }
 
 model University {
-  id      String    @db.Uuid @id
+  id      String    @id @db.Uuid
   name    String    @db.VarChar(30)
   college College[]
 }
 
 model College {
-  id           String     @db.Uuid @id
+  id           String     @id @db.Uuid
   universityId String     @db.Uuid
-  university   University @relation(references: [id], fields: [universityId])
   name         String     @db.VarChar(20)
+  university   University @relation(fields: [universityId], references: [id])
   majors       Major[]
 }
 
 model Major {
-  id        String  @db.Uuid @id
+  id        String  @id @db.Uuid
   collegeId String  @db.Uuid
-  college   College @relation(references: [id], fields: [collegeId])
   name      String  @db.VarChar(30)
+  college   College @relation(fields: [collegeId], references: [id])
 }
